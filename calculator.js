@@ -136,14 +136,14 @@ const createDisplayString = (key, displayedNum, state) => {
 
     if (keyType === 'number') {
         if(!displayedNum.includes('Infinity')){
-            return (displayedNum === '0' || previousKeyType === 'operator' || previousKeyType === 'calculate') ?
+            return (displayedNum === '0' || previousKeyType === 'operator' || (previousKeyType === 'calculate' && firstValue)) ?
             keyContent : displayedNum + keyContent;
         }
         return displayedNum;
     }
 
     if (keyType === 'decimal') {
-        return (previousKeyType === 'operator' || previousKeyType === 'calculate') ? '0.' :
+        return (previousKeyType === 'operator' || (previousKeyType === 'calculate' && firstValue)) ? '0.' :
             (!displayedNum.includes('.') ? displayedNum + '.' : displayedNum );
     }
 
@@ -185,8 +185,8 @@ const updateCalculatorState = (key, calculator, calcValue, displayedNum) => {
     .forEach(k => k.classList.remove('is-depressed'));
 
     if (keyType === 'number') {
-        clearButton.textContent = 'CE'
-        if (previousKeyType === 'calculate') {
+        clearButton.textContent = 'CE';
+        if (previousKeyType === 'calculate' && firstValue) {
             initializeCalculatorState(calculator);
         }
         
@@ -194,7 +194,7 @@ const updateCalculatorState = (key, calculator, calcValue, displayedNum) => {
 
     if (keyType === 'decimal') {
         clearButton.textContent = 'CE'
-        if (previousKeyType === 'calculate') {
+        if (previousKeyType === 'calculate' && firstValue) {
             initializeCalculatorState(calculator);
         }
     }
@@ -215,7 +215,10 @@ const updateCalculatorState = (key, calculator, calcValue, displayedNum) => {
     }
 
     if (keyType === 'calculate') {
-        clearButton.textContent = 'AC'
+        if(firstValue) {
+            clearButton.textContent = 'AC'
+        }
+        
         calculator.dataset.modValue = (firstValue && previousKeyType === 'calculate') ? modValue : displayedNum;
     }
 
