@@ -14,8 +14,8 @@ keys.addEventListener('click', e => {
         
 
         updateCalculatorState(key, calculator, displayString, displayedNum);
-        display.textContent = displayString;
-        //display.textContent = format(displayString);
+        display.textContent = format(displayString);
+        console.log(format(displayString));
 
         // const key = e.target;
         // const action = key.dataset.action;
@@ -135,8 +135,11 @@ const createDisplayString = (key, displayedNum, state) => {
     } = state;
 
     if (keyType === 'number') {
-        return (displayedNum === '0' || previousKeyType === 'operator' || previousKeyType === 'calculate') ?
+        if(!displayedNum.includes('Infinity')){
+            return (displayedNum === '0' || previousKeyType === 'operator' || previousKeyType === 'calculate') ?
             keyContent : displayedNum + keyContent;
+        }
+        return displayedNum;
     }
 
     if (keyType === 'decimal') {
@@ -158,6 +161,7 @@ const createDisplayString = (key, displayedNum, state) => {
             return (previousKeyType === 'calculate') ?
                 calculate(displayedNum, operator, modValue) : calculate(firstValue, operator, displayedNum);
         }
+        return displayedNum;
     }
 
     if (keyType === 'clear') {
@@ -197,7 +201,7 @@ const updateCalculatorState = (key, calculator, calcValue, displayedNum) => {
 
 
     if (keyType === 'operator') {
-        clearButton.textContent = 'AC'
+        clearButton.textContent = 'CE'
         calculator.dataset.firstValue = 
         (
             firstValue &&
@@ -274,10 +278,15 @@ const initializeCalculatorState = (calculator) => {
     calculator.dataset.previousKeyType = '';
 }
 
-// const format = (displayString) = {
+const format = (displayNumber) => {
+    let  displayString = String(displayNumber);
+    if(displayString.length > 13 && !displayString.includes('Infinity')) {
+        if(!(displayString.length === 14 && displayString.charAt(0) === '-')){
+            return parseFloat(displayString).toExponential(7);
+        }
+    }
 
+    return displayString;
 
-//     return
-// }
-
+}
 
